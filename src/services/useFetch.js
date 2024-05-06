@@ -8,15 +8,13 @@ const useFetch = (url) => {
 
   useEffect(() => {
     async function init() {
-      getProducts("shoes");
       try {
         const response = await fetch(baseUrl + url);
-        if(response.ok) {
-            const json= response.json();
-            setData(json);
-        }
-        else{
-            throw response;
+        if (response.ok) {
+          const json = await response.json();
+          setData(json);
+        } else {
+          throw response;
         }
       } catch (error) {
         seterror(error);
@@ -27,8 +25,7 @@ const useFetch = (url) => {
     init();
   }, [url]);
 
-    return { data, error, loading };
-
+  return { data, error, loading };
 };
 
 export default useFetch;

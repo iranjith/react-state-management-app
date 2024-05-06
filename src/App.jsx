@@ -2,30 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import Footer from "./Footer";
 import Header from "./Header";
+import useFetch from "./services/useFetch";
 import { getProducts } from "./services/productService";
 import Spinner from "./Spinner";
 
 export default function App() {
   const [size, setSize] = useState("");
-  const [products, setProducts] = useState([]);
-  const [error, seterror] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function init() {
-      getProducts("shoes")
-        try{
-          const response = await getProducts("shoes");
-          setProducts(response);
-        } catch (error) {
-          seterror(error);
-        }
-        finally{
-          setLoading(false);
-        }
-    }
-    init()
-  }, []);
+  const {
+    data: products,
+    loading,
+    error
+  } = useFetch("products?category=shoes");
 
   const onSizeChange = (e) => {
     setSize(e.target.value);
