@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -6,30 +6,30 @@ import { getProducts } from "./services/productService";
 import Spinner from "./Spinner";
 
 export default function App() {
-
   const [size, setSize] = useState("");
   const [products, setProducts] = useState([]);
   const [error, seterror] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-    getProducts("shoes").then((response) => {
-      setProducts(response);
-    })
-    .catch((error) => {
-      seterror(error);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
+    async function init() {
+      getProducts("shoes")
+        try{
+          const response = await getProducts("shoes");
+          setProducts(response);
+        } catch (error) {
+          seterror(error);
+        }
+        finally{
+          setLoading(false);
+        }
+    }
+    init()
   }, []);
-
-  
 
   const onSizeChange = (e) => {
     setSize(e.target.value);
-  }
+  };
 
   function renderProduct(p) {
     return (
@@ -43,10 +43,12 @@ export default function App() {
     );
   }
 
-  const filteredProducts= size ? products.filter(p=>p.skus.find(s=>s.size===parseInt(size))) : products;
+  const filteredProducts = size
+    ? products.filter((p) => p.skus.find((s) => s.size === parseInt(size)))
+    : products;
 
-  if(error) throw error;
-  if(loading) return <Spinner />; 
+  if (error) throw error;
+  if (loading) return <Spinner />;
 
   return (
     <>
@@ -63,9 +65,7 @@ export default function App() {
             </select>
           </section>
           {size && <h2>Found {filteredProducts.length} items</h2>}
-          <section id="products">
-            {filteredProducts.map(renderProduct)}
-          </section>
+          <section id="products">{filteredProducts.map(renderProduct)}</section>
         </main>
       </div>
       <Footer />
