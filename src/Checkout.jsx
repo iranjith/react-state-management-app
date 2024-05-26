@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { saveShippingAddress } from "./services/shippingService";
+import { useNavigate } from "react-router-dom";
 
 const STATUS={
   IDLE:"IDLE",
@@ -13,9 +15,10 @@ const emptyAddress = {
   country: "",
 };
 
-export default function Checkout({ cart }) {
+export default function Checkout({ cart, emptyCart }) {
   const [address, setAddress] = useState(emptyAddress);
   const [status, setStatus] = useState(STATUS.IDLE);
+  const [saveError, setSaveError] = useState(null);
 
   function handleChange(e) {
     e.persist(); //persist the event
@@ -35,6 +38,22 @@ export default function Checkout({ cart }) {
   async function handleSubmit(event) {
     event.preventDefault();
     setStatus(STATUS.SUBMITTING);
+    try{
+      await saveShippingAddress(address);
+      emptyCart();
+      setStatus(STATUS.COMPLETED);
+    }
+    catch(error){
+      setSaveError(error);
+    }
+  }
+
+  if(saveError){
+    throw saveError;
+  } 
+
+  if(status === STATUS.COMPLETED){
+    return <h1>Thanks for shopping!</h1>
   }
 
   return (

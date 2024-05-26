@@ -42,6 +42,10 @@ export default function App() {
     });
   }
 
+  function emptyCart() {
+    setCart([]);
+  }
+
   return (
     <>
       <div className="content">
@@ -63,7 +67,7 @@ export default function App() {
             />
             <Route
               path="/checkout"
-              element={<Checkout cart={cart}></Checkout>}
+              element={<Checkout cart={cart} emptyCart={emptyCart}></Checkout>}
             />
           </Routes>
         </main>
