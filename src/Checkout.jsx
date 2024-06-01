@@ -15,7 +15,7 @@ const emptyAddress = {
   country: "",
 };
 
-export default function Checkout({ cart, emptyCart }) {
+export default function Checkout({ cart, dispatch }) {
   const [address, setAddress] = useState(emptyAddress);
   const [status, setStatus] = useState(STATUS.IDLE);
   const [saveError, setSaveError] = useState(null);
@@ -27,7 +27,6 @@ export default function Checkout({ cart, emptyCart }) {
 
   function handleChange(e) {
     e.persist(); //persist the event
-    // TODO
     setAddress( (curAddress)=> {
       return {
         ...curAddress,
@@ -38,17 +37,19 @@ export default function Checkout({ cart, emptyCart }) {
   }
 
   function handleBlur(event) {
+    event.persist();
     setTouched((cur) => {
       return { ...cur, [event.target.id]: true };
     });
   }
+  
   async function handleSubmit(event) {
     event.preventDefault();
     setStatus(STATUS.SUBMITTING);
     if(isValid){
       try{
         await saveShippingAddress(address);
-        emptyCart();
+        dispatch({type:"empty"});
         setStatus(STATUS.COMPLETED);
       }
       catch(error){
